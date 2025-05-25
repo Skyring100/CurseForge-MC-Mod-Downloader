@@ -1,0 +1,9 @@
+[general]
+modListFile = "ModList.txt"
+makeLogFile = true
+searchURL = "https://www.curseforge.com/minecraft/mc-mods/"
+modsFolder = "mods"
+
+[modProperties]
+modLoader = "Forge"
+version = "1.19.2"
