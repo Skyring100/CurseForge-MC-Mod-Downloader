@@ -26,13 +26,13 @@ def download_mod(mod_page, mod_loader, version):
     time.sleep(5.5)
     # Check for any dependencies to download for the mod to function
     driver.get(mod_page+f"/relations/dependencies?page=1&type=RequiredDependency")
-    all_dependencies = driver.find_elements(By.XPATH, "//div[@class='results-container']/a")
-    if len(all_dependencies) != 0:
-        print(f"Dependencies for {mod_page} found")
+    # Wait for possible dependenices to load
+    time.sleep(2)
+    all_dependencies =  [ele.get_attribute("href") for ele in driver.find_elements(By.XPATH, "//div[@class='results-container']/a")]
     time.sleep(0.5)
     for dependent in all_dependencies:
         print(f"Dependency for {mod_page}, {dependent}")
-        download_mod(dependent.get_attribute("href"), mod_loader, version)
+        download_mod(dependent, mod_loader, version)
 
 with open('config.toml', 'r') as f:
     config = toml.load(f)
@@ -50,6 +50,7 @@ prefs = {
     "profile.default_content_setting_values.automatic_downloads": 1
 }
 webscraper_options.add_experimental_option("prefs", prefs)
+webscraper_options.add_argument("--log-level=3")
 
 driver = webdriver.Chrome(options=webscraper_options)
 

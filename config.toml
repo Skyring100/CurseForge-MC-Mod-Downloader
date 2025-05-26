@@ -6,4 +6,4 @@ modsFolder = "mods"
 
 [modProperties]
 modLoader = "Forge"
-version = "1.19.2"
+version = "1.20.1"
