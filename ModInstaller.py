@@ -18,17 +18,18 @@ def download_mod(mod_page, mod_loader, version):
     if driver.find_elements(By.XPATH, "//div[@class='error-container']"):
         print(f"Mod page '{mod_page}' does not exist, aborting")
         return
-    time.sleep(3)
+    time.sleep(1)
     # Get the download link for the most recent file
     download_link = driver.find_element(By.XPATH, "//div[@class='files-table']/div[@class='file-row']/div/div/ul/li[2]/a").get_attribute("href")
     driver.get(download_link)
+    # We are required to wait 5 seconds for download to begin
     time.sleep(6)
     # Check for any dependencies to download for the mod to function
     driver.get(mod_page+f"/relations/dependencies?page=1&type=RequiredDependency")
     all_dependencies = driver.find_elements(By.XPATH, "//div[@class='results-container']/a")
     if len(all_dependencies) != 0:
         print(f"Dependencies for {mod_page} found")
-    time.sleep(3)
+    time.sleep(1)
     for dependent in all_dependencies:
         print(f"Dependency for {mod_page}, {dependent}")
         download_mod(dependent.get_attribute("href"), mod_loader, version)
@@ -41,7 +42,6 @@ if not os.path.exists(config['general']['modsFolder']):
     os.makedirs(config['general']['modsFolder'])
 
 webscraper_options = Options()
-#webscraper_options.headless = True
 prefs = {
     "download.prompt_for_download": False,
     "download.default_directory": os.path.join(os.getcwd(), config['general']['modsFolder']),
