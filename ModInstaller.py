@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import NoSuchElementException
 import os
 import time
 
@@ -28,10 +29,14 @@ def download_mod(mod_page, mod_loader, version):
     driver.get(link)
     # Check if there is a 404 error for the modpage
     if driver.find_elements(By.XPATH, "//div[@class='error-container']"):
-        print(f"Mod page '{mod_page}' does not exist, aborting")
+        print(f"!====={mod_page} DOES NOT EXIST=====!")
         return
     # Get the download link for the most recent file
-    download_link = driver.find_element(By.XPATH, "//div[@class='files-table']/div[@class='file-row']/div/div/ul/li[2]/a").get_attribute("href")
+    try:
+        download_link = driver.find_element(By.XPATH, "//div[@class='files-table']/div[@class='file-row']/div/div/ul/li[2]/a").get_attribute("href")
+    except NoSuchElementException:
+        print(f"!====={mod_page} DOES NOT HAVE DOWNLOADABLE FILE=====!")
+        return
     driver.get(download_link)
     # We are required to wait 5 seconds for download to begin
     time.sleep(5.5)
