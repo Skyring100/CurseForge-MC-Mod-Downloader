@@ -2,6 +2,9 @@ import toml
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 import os
 import time
 
@@ -34,8 +37,15 @@ def download_mod(mod_page, mod_loader, version):
     time.sleep(5.5)
     # Check for any dependencies to download for the mod to function
     driver.get(mod_page+f"/relations/dependencies?page=1&type=RequiredDependency")
-    all_dependencies =  [ele.get_attribute("href") for ele in driver.find_elements(By.XPATH, "//div[@class='results-container']/a")]
-    for dependent in all_dependencies:
+    
+    try:
+        dependency_elements = WebDriverWait(driver, 3).until(EC.presence_of_all_elements_located((By.XPATH, "//div[@class='results-container']/a")))
+    except TimeoutException:
+        print(f"No dependencies found for {mod_page}")
+        return
+    
+    dependency_links =  [ele.get_attribute("href") for ele in dependency_elements]
+    for dependent in dependency_links:
         print(f"Dependency for {mod_page} ==> {dependent}")
         download_mod(dependent, mod_loader, version)
 
