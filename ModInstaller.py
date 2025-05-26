@@ -18,18 +18,18 @@ def download_mod(mod_page, mod_loader, version):
     if driver.find_elements(By.XPATH, "//div[@class='error-container']"):
         print(f"Mod page '{mod_page}' does not exist, aborting")
         return
-    time.sleep(1)
+    time.sleep(0.5)
     # Get the download link for the most recent file
     download_link = driver.find_element(By.XPATH, "//div[@class='files-table']/div[@class='file-row']/div/div/ul/li[2]/a").get_attribute("href")
     driver.get(download_link)
     # We are required to wait 5 seconds for download to begin
-    time.sleep(6)
+    time.sleep(5.5)
     # Check for any dependencies to download for the mod to function
     driver.get(mod_page+f"/relations/dependencies?page=1&type=RequiredDependency")
     all_dependencies = driver.find_elements(By.XPATH, "//div[@class='results-container']/a")
     if len(all_dependencies) != 0:
         print(f"Dependencies for {mod_page} found")
-    time.sleep(1)
+    time.sleep(0.5)
     for dependent in all_dependencies:
         print(f"Dependency for {mod_page}, {dependent}")
         download_mod(dependent.get_attribute("href"), mod_loader, version)
@@ -55,5 +55,5 @@ driver = webdriver.Chrome(options=webscraper_options)
 
 with open(config['general']['modListFile']) as mod_list:
     for line in mod_list:
-        mod_page = config['general']['searchURL'] + line.strip().lower().replace(' ', '-')
+        mod_page = config['general']['searchURL'] + line.strip().lower().replace('\'', '').replace(' ', '-')
         download_mod(mod_page, config['modProperties']['modLoader'], config['modProperties']['version'])
